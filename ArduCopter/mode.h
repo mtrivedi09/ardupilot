@@ -36,6 +36,7 @@ public:
         ZIGZAG    =    24,  // ZIGZAG mode is able to fly in a zigzag manner with predefined point A and point B
         SYSTEMID  =    25,  // System ID mode produces automated system identification signals in the controllers
         AUTOROTATE =   26,  // Autonomous autorotation
+        DACLAND = 27,
     };
 
     // constructor
@@ -104,6 +105,7 @@ protected:
     // in modes that support landing
     void land_run_horizontal_control();
     void land_run_vertical_control(bool pause_descent = false);
+    void dacland_run_vertical_control();
 
     // return expected input throttle setting to hover:
     virtual float throttle_hover() const;
@@ -861,6 +863,35 @@ protected:
 
     const char *name() const override { return "LAND"; }
     const char *name4() const override { return "LAND"; }
+
+private:
+
+    void gps_run();
+    void nogps_run();
+};
+
+class ModeDacLand : public Mode {
+
+public:
+    // inherit constructor
+    using Mode::Mode;
+
+    bool init(bool ignore_checks) override;
+    void run() override;
+
+    bool requires_GPS() const override { return false; }
+    bool has_manual_throttle() const override { return false; }
+    bool allows_arming(bool from_gcs) const override { return false; };
+    bool is_autopilot() const override { return true; }
+
+    bool is_landing() const override { return true; };
+
+    void do_not_use_GPS();
+
+protected:
+
+    const char *name() const override { return "DACLAND"; }
+    const char *name4() const override { return "DACLAND"; }
 
 private:
 

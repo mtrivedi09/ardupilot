@@ -75,6 +75,10 @@ Mode *Copter::mode_from_mode_num(const Mode::Number mode)
             ret = &mode_land;
             break;
 
+        case Mode::Number::DACLAND:
+            ret = &mode_dacland;
+            break;
+
 #if MODE_RTL_ENABLED == ENABLED
         case Mode::Number::RTL:
             ret = &mode_rtl;
@@ -556,6 +560,30 @@ void Mode::land_run_vertical_control(bool pause_descent)
             cmb_rate = MIN(-precland_min_descent_speed, -max_descent_speed+land_slowdown);
         }
     }
+
+    // update altitude target and call position controller
+    pos_control->set_alt_target_from_climb_rate_ff(cmb_rate, G_Dt, true);
+    pos_control->update_z_controller();
+}
+
+void Mode::dacland_run_vertical_control()
+{
+    float cmb_rate = 0;
+    float max_land_descent_velocity;
+    if (g.dac_land_spd_hi > 0) {
+        max_land_descent_velocity = -g.dac_land_spd_hi;
+    } else {
+        max_land_descent_velocity = pos_control->get_max_speed_down();
+    }
+
+    // Don't speed up for landing.
+    max_land_descent_velocity = MIN(max_land_descent_velocity, -abs(g.dac_land_spd));
+
+    // Compute a vertical velocity demand such that the vehicle approaches g2.land_alt_low. Without the below constraint, this would cause the vehicle to hover at g2.land_alt_low.
+    cmb_rate = AC_AttitudeControl::sqrt_controller(MAX(g.dac_land_lo_alt,100)-get_alt_above_ground_cm(), pos_control->get_pos_z_p().kP(), pos_control->get_max_accel_z(), G_Dt);
+
+    // Constrain the demanded vertical velocity so that it is between the configured maximum descent speed and the configured minimum descent speed.
+    cmb_rate = constrain_float(cmb_rate, max_land_descent_velocity, -abs(g.dac_land_spd));
 
     // update altitude target and call position controller
     pos_control->set_alt_target_from_climb_rate_ff(cmb_rate, G_Dt, true);

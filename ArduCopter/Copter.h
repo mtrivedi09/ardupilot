@@ -236,6 +236,7 @@ public:
     friend class ModeThrow;
     friend class ModeZigZag;
     friend class ModeAutorotate;
+    friend class ModeDacLand;
 
     Copter(void);
 
@@ -923,6 +924,7 @@ private:
     ModeAcro_Heli mode_acro;
 #else
     ModeAcro mode_acro;
+    ModeDacLand mode_dacland;
 #endif
 #endif
     ModeAltHold mode_althold;
