@@ -454,13 +454,29 @@
  # define LAND_REPOSITION_DEFAULT   1   // by default the pilot can override roll/pitch during landing
 #endif
 #ifndef LAND_WITH_DELAY_MS
- # define LAND_WITH_DELAY_MS        4000    // default delay (in milliseconds) when a land-with-delay is triggered during a failsafe event
+ # define LAND_WITH_DELAY_MS        1    // default delay (in milliseconds) when a land-with-delay is triggered during a failsafe event
 #endif
 #ifndef LAND_CANCEL_TRIGGER_THR
  # define LAND_CANCEL_TRIGGER_THR   700     // land is cancelled by input throttle above 700
 #endif
 #ifndef LAND_RANGEFINDER_MIN_ALT_CM
 #define LAND_RANGEFINDER_MIN_ALT_CM 200
+#endif
+
+//////////////////////////////////////////////////////////////////////////////
+// DAC Landing
+//
+#ifndef DAC_LAND_SPD_HI_DEFAULT
+ # define DAC_LAND_SPD_HI_DEFAULT    250.0f          // the descent speed 
+#endif
+#ifndef DAC_LAND_SPD_DEFAULT
+ # define DAC_LAND_SPD_DEFAULT    50.0f          // the ascent speed 
+#endif
+#ifndef DAC_LAND_ACCEL_DEFAULT
+ # define DAC_LAND_ACCEL_DEFAULT    100.0f          // the acceleration
+#endif
+#ifndef DAC_LAND_LO_ALT_DEFAULT
+ # define DAC_LAND_LO_ALT_DEFAULT    500.0f          // the acceleration
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
